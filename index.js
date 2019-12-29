@@ -4,6 +4,84 @@ const { logger } = q;
 const pingCountArg = false ? "-n" : "-c";
 const timeRe = / time=(\d+\.?\d*) ms/gi;
 
+function buildColorSteps({
+  colorGood,
+  colorBad,
+  midSteps,
+  pingThreshold,
+  stepGap
+}) {
+  const totalSteps = midSteps + 2;
+  const colorGoodRGB = hexToRGB(colorGood);
+  const colorBadRGB = hexToRGB(colorBad);
+  const stepPercentagesReversed = [0].concat(
+    new Array(totalSteps - 1)
+      .fill(1 / (totalSteps - 1))
+      .map((n, i) => (i + 1) * n * 2)
+  );
+  const stepPercentages = stepPercentagesReversed.slice().reverse();
+  const colorSteps = new Array(totalSteps)
+    .fill(0)
+    .map((_, i) =>
+      rgbToHex(
+        new Array(3)
+          .fill(0)
+          .map((_, x) =>
+            mergeColorPiece(
+              colorGoodRGB[x],
+              colorBadRGB[x],
+              stepPercentages[i],
+              stepPercentagesReversed[i]
+            )
+          )
+      )
+    );
+
+  // Assign color step to a predicate
+  return colorSteps.map((hex, i) => {
+    let predicate = time => time <= pingThreshold + stepGap * i;
+
+    if (i + 1 === totalSteps) {
+      predicate = time => time > pingThreshold + stepGap * (i - 1);
+    }
+
+    return [hex, predicate];
+  });
+}
+
+function mergeColorPiece(color1, color2, percentage1, percentage2) {
+  return Math.round((color1 * percentage1 + color2 * percentage2) / 2);
+}
+
+function hexToRGB(color) {
+  return color
+    .substr(1)
+    .split("")
+    .reduce((acc, cur, i) => {
+      if (i % 2) {
+        acc[acc.length - 1] += cur;
+      } else {
+        acc.push(cur);
+      }
+
+      return acc;
+    }, [])
+    .map(n => parseInt(n, 16));
+}
+
+function rgbToHex(color) {
+  return (
+    "#" +
+    color
+      .map(n =>
+        Number(n)
+          .toString(16)
+          .padStart(2, "0")
+      )
+      .join("")
+  );
+}
+
 class DasPing extends q.DesktopApp {
   constructor() {
     super();
@@ -21,6 +99,7 @@ class DasPing extends q.DesktopApp {
     };
 
     this.pollingInterval = this.config.pollingInterval;
+    this.colorSteps = buildColorSteps(this.config);
     this.run();
 
     logger.info("DasPing applet initialized");
@@ -48,7 +127,7 @@ class DasPing extends q.DesktopApp {
     if (time) {
       //     <=300      <=400      <=500      <=600       >600
       // [ '#00ff00', '#40bf00', '#808000', '#bf4000', '#ff0000' ]
-      [color] = this.buildColorSteps().find(([, predicate]) => predicate(time));
+      [color] = this.colorSteps.find(([, predicate]) => predicate(time));
       message = `Time: ${time}ms; Color: ${color}`;
     }
 
@@ -59,85 +138,6 @@ class DasPing extends q.DesktopApp {
       name: "DasPing",
       message
     });
-  }
-
-  buildColorSteps() {
-    const {
-      colorGood,
-      colorBad,
-      midSteps,
-      pingThreshold,
-      stepGap
-    } = this.config;
-    const totalSteps = midSteps + 2;
-    const colorGoodRGB = DasPing.hexToRGB(colorGood);
-    const colorBadRGB = DasPing.hexToRGB(colorBad);
-    const stepPercentagesReversed = [0].concat(
-      new Array(totalSteps - 1)
-        .fill(1 / (totalSteps - 1))
-        .map((n, i) => (i + 1) * n * 2)
-    );
-    const stepPercentages = stepPercentagesReversed.slice().reverse();
-    const colorSteps = new Array(totalSteps)
-      .fill(0)
-      .map((_, i) =>
-        DasPing.rgbToHex(
-          new Array(3)
-            .fill(0)
-            .map((_, x) =>
-              DasPing.mergeColorPiece(
-                colorGoodRGB[x],
-                colorBadRGB[x],
-                stepPercentages[i],
-                stepPercentagesReversed[i]
-              )
-            )
-        )
-      );
-
-    // Assign color step to a predicate
-    return colorSteps.map((hex, i) => {
-      let predicate = time => time <= pingThreshold + stepGap * i;
-
-      if (i + 1 === totalSteps) {
-        predicate = time => time > pingThreshold + stepGap * (i - 1);
-      }
-
-      return [hex, predicate];
-    });
-  }
-
-  static mergeColorPiece(color1, color2, percentage1, percentage2) {
-    return Math.round((color1 * percentage1 + color2 * percentage2) / 2);
-  }
-
-  static hexToRGB(color) {
-    return color
-      .substr(1)
-      .split("")
-      .reduce((acc, cur, i) => {
-        if (i % 2) {
-          acc[acc.length - 1] += cur;
-        } else {
-          acc.push(cur);
-        }
-
-        return acc;
-      }, [])
-      .map(n => parseInt(n, 16));
-  }
-
-  static rgbToHex(color) {
-    return (
-      "#" +
-      color
-        .map(n =>
-          Number(n)
-            .toString(16)
-            .padStart(2, "0")
-        )
-        .join("")
-    );
   }
 }
 
