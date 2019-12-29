@@ -1,33 +1,29 @@
-// const q, { logger } = require("daskeyboard-applet");
-// TODO: Remove
-const logger = console;
-
+const q = require("daskeyboard-applet");
 const { execSync } = require("child_process");
+const { logger } = q;
 const pingCountArg = false ? "-n" : "-c";
 const timeRe = / time=(\d+\.?\d*) ms/gi;
 
-// class DasPing extends q.DesktopApp {
-class DasPing {
+class DasPing extends q.DesktopApp {
   constructor() {
-    // super();
+    super();
 
     this.config = {
       address: "https://google.com",
       colorBad: "#FF0000",
       colorGood: "#00FF00",
       colorFail: "#FF00FF",
-      midSteps: 3,
-      pingThreshold: 300,
-      pollingInterval: 60000,
-      stepGap: 100,
-      ...this.config
+      ...this.config,
+      midSteps: parseInt(this.config.midSteps, 10) || 3,
+      pingThreshold: parseInt(this.config.pingThreshold, 10) || 300,
+      pollingInterval: parseInt(this.config.pollingInterval, 10) || 60000,
+      stepGap: parseInt(this.config.stepGap, 10) || 100
     };
 
-    this.pollingInterval = this.config.pollingInterval || 60000;
-    logger.info("DasPing applet initialized");
-
-    // TODO: Remove
+    this.pollingInterval = this.config.pollingInterval;
     this.run();
+
+    logger.info("DasPing applet initialized");
   }
 
   async run() {
@@ -58,12 +54,11 @@ class DasPing {
 
     logger.info(message);
 
-    // TODO: Restore
-    // return new q.Signal({
-    //   points: [[new q.Point(color)]],
-    //   name: "DasPing",
-    //   message
-    // });
+    return new q.Signal({
+      points: [[new q.Point(color)]],
+      name: "DasPing",
+      message
+    });
   }
 
   buildColorSteps() {
