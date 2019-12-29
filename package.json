@@ -1,0 +1,117 @@
+{
+  "name": "daskeyboard-applet--dasping",
+  "displayName": "Das Ping",
+  "version": "1.0.0",
+  "description": "Display ping values as a color gradient.",
+  "longDescription": "Pings the given address and assigns a color to a key based on the response time.",
+  "officialProductName": "Das Ping",
+  "appUrl": "",
+  "isSingleton": true,
+  "videoUrl": "",
+  "icon": "assets/icon.png",
+  "image": "assets/q-cpu-usage.png",
+  "publisher": "Benjamin Solum",
+  "authorName": "Benjamin Solum",
+  "authorUrl": "https://github.com/soluml",
+  "issuesUrl": "https://github.com/daskeyboard/daskeyboard-applet--dasping/issues",
+  "homePageUrl": "https://github.com/daskeyboard/daskeyboard-applet--dasping",
+  "developerRepoUrl": "https://github.com/daskeyboard/daskeyboard-applet--dasping",
+  "licenseUrl": "https://opensource.org/licenses/MIT",
+  "changelogUrl": "CHANGELOG.md",
+  "license": "MIT",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "das-keyboard-q": "3.2.0"
+  },
+  "dependencies": {
+    "daskeyboard-applet": "^2.11.4"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 1,
+      "height": 1
+    },
+    "applet": {
+      "defaults": {}
+    },
+    "questions": [
+      {
+        "key": "address",
+        "label": "Address",
+        "help": "Address of server to ping",
+        "placeholder": "e.g. www.google.com",
+        "required": true,
+        "order": 1,
+        "controlType": "textbox"
+      },
+      {
+        "key": "pollingInterval",
+        "label": "Polling Interval (milliseconds)",
+        "help": "How frequently to ping the address in milliseconds. 1000 would be one second, 60000 would be one minute. [Default: 60000]",
+        "required": false,
+        "order": 2,
+        "value": "60000",
+        "controlType": "textbox"
+      },
+      {
+        "key": "pingThreshold",
+        "label": "Ping Threshold (milliseconds)",
+        "help": "All ping times below this number will be considered green. Every step above will change colors. [Default: 300]",
+        "required": false,
+        "order": 3,
+        "value": "300",
+        "controlType": "textbox"
+      },
+      {
+        "key": "midSteps",
+        "label": "Mid Points / Steps",
+        "help": "Number of steps between the threshold and slowest value. 3 mid steps (set here) results in 5 possible key colors: threshold, 3 midsteps, last step. [Default: 3]",
+        "required": false,
+        "order": 4,
+        "value": "3",
+        "controlType": "textbox"
+      },
+      {
+        "key": "stepGap",
+        "label": "Time Between Steps (milliseconds)",
+        "help": "The time/distance between steps in milliseconds. [Default: 100]",
+        "required": false,
+        "order": 5,
+        "value": "100",
+        "controlType": "textbox"
+      },
+      {
+        "key": "colorGood",
+        "label": "Good Ping Color",
+        "help": "This color will be used for pings at or lower than the threshold. Times above will be a gradient between this and the Bad Ping Color.",
+        "required": true,
+        "order": 6,
+        "value": "#00FF00",
+        "controlType": "color"
+      },
+      {
+        "key": "colorBad",
+        "label": "Bad Ping Color",
+        "help": "This color will be used for all pings higher than the last step. Times below will be a gradient between this and the Good Ping Color.",
+        "required": true,
+        "order": 7,
+        "value": "#FF0000",
+        "controlType": "color"
+      },
+      {
+        "key": "colorFail",
+        "label": "Failure Ping Color",
+        "help": "This color will be used for any pings that fail to bring back a time.",
+        "required": true,
+        "order": 8,
+        "value": "#FF00FF",
+        "controlType": "color"
+      }
+    ]
+  }
+}
