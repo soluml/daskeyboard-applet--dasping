@@ -9,7 +9,7 @@
   "isSingleton": true,
   "videoUrl": "",
   "icon": "assets/icon.png",
-  "image": "assets/q-cpu-usage.png",
+  "image": "assets/usage.png",
   "publisher": "Benjamin Solum",
   "authorName": "Benjamin Solum",
   "authorUrl": "https://github.com/soluml",
