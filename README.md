@@ -1,6 +1,6 @@
 # Q Applet: Das Ping
 
-![Das Ping](assets/icon.png "Das Keyboard applet")
+<img align="left" alt="Das Ping - Das Keyboard Applet" src="assets/icon.png" width="100" height="100">
 
 Das Ping periodically pings a website and assigns a color to a key based on the response time. The colors and timings are configurable.
 
