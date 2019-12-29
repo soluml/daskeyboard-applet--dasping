@@ -125,6 +125,7 @@ class DasPing extends q.DesktopApp {
     let message = `Time: No Response; Color: ${color}`;
 
     if (time) {
+      // For five steps between Green and Red:
       //     <=300      <=400      <=500      <=600       >600
       // [ '#00ff00', '#40bf00', '#808000', '#bf4000', '#ff0000' ]
       [color] = this.colorSteps.find(([, predicate]) => predicate(time));
