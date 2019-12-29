@@ -1,7 +1,7 @@
 const q = require("daskeyboard-applet");
 const { execSync } = require("child_process");
 const { logger } = q;
-const pingCountArg = false ? "-n" : "-c";
+const pingCountArg = process.platform === "win32" ? "-n" : "-c";
 const timeRe = / time=(\d+\.?\d*) ms/gi;
 
 function buildColorSteps({
