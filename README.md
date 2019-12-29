@@ -4,6 +4,8 @@
 
 Das Ping periodically pings a website and assigns a color to a key based on the response time. The colors and timings are configurable.
 
+<br>
+
 ## Changelog
 
 [CHANGELOG.MD](CHANGELOG.md)
