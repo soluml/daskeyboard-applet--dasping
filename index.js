@@ -87,10 +87,6 @@ class DasPing extends q.DesktopApp {
     super();
 
     this.config = {
-      address: "https://google.com",
-      colorBad: "#FF0000",
-      colorGood: "#00FF00",
-      colorFail: "#FF00FF",
       ...this.config,
       midSteps: parseInt(this.config.midSteps, 10) || 3,
       pingThreshold: parseInt(this.config.pingThreshold, 10) || 300,
@@ -120,8 +116,7 @@ class DasPing extends q.DesktopApp {
   }
 
   buildSignal(time) {
-    const { colorFail, stepGap } = this.config;
-    let color = colorFail;
+    let { colorFail: color } = this.config;
     let message = `Time: No Response; Color: ${color}`;
 
     if (time) {
