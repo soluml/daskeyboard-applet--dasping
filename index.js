@@ -105,7 +105,10 @@ class DasPing extends q.DesktopApp {
 
     try {
       const output = execSync(`ping ${address} ${pingCountArg} 1`).toString();
-      var [, time] = timeRe.exec(output) || [];
+      var [, time] = timeRe.exec(output);
+
+      // Reset exec index for next call
+      timeRe.lastIndex = 0;
 
       logger.info(output);
     } catch (error) {
@@ -116,22 +119,24 @@ class DasPing extends q.DesktopApp {
   }
 
   buildSignal(time) {
-    let { colorFail: color } = this.config;
-    let message = `Time: No Response; Color: ${color}`;
+    let { address, colorFail: color } = this.config;
+    const addStr = `URL: ${address}`;
+    const dateStr = `Last Checked: ${new Date().toLocaleString()}`;
+    let message = `${addStr}; Time: No Response; Color: ${color}; ${dateStr}`;
 
     if (time) {
       // For five steps between Green and Red:
       //     <=300      <=400      <=500      <=600       >600
       // [ '#00ff00', '#40bf00', '#808000', '#bf4000', '#ff0000' ]
       [color] = this.colorSteps.find(([, predicate]) => predicate(time));
-      message = `Time: ${time}ms; Color: ${color}`;
+      message = `${addStr}; Time: ${time}ms; Color: ${color}; ${dateStr}`;
     }
 
     logger.info(message);
 
     return new q.Signal({
       points: [[new q.Point(color)]],
-      name: "DasPing",
+      name: "Das Ping",
       message
     });
   }
