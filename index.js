@@ -2,7 +2,7 @@ const q = require("daskeyboard-applet");
 const { execSync } = require("child_process");
 const { logger } = q;
 const pingCountArg = process.platform === "win32" ? "-n" : "-c";
-const timeRe = / time=(\d+\.?\d*) ms/gi;
+const timeRe = / time=(\d+\.?\d*)\s?ms/gi;
 
 function buildColorSteps({
   colorGood,
@@ -94,18 +94,18 @@ class DasPing extends q.DesktopApp {
       stepGap: parseInt(this.config.stepGap, 10) || 100
     };
 
-    this.pollingInterval = this.config.pollingInterval;
     this.colorSteps = buildColorSteps(this.config);
-    this.run();
+    this.pollingInterval = this.config.pollingInterval;
 
     logger.info("DasPing applet initialized");
   }
 
   async run() {
+    const { address } = this.config;
+
     try {
-      const { address } = this.config;
       const output = execSync(`ping ${address} ${pingCountArg} 1`).toString();
-      var [, time] = timeRe.exec(output);
+      var [, time] = timeRe.exec(output) || [];
 
       logger.info(output);
     } catch (error) {
