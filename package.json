@@ -23,13 +23,17 @@
   "readMeEndUserUrl": "README_ENDUSER.md",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha"
   },
   "engines": {
     "das-keyboard-q": "3.2.2"
   },
   "dependencies": {
     "daskeyboard-applet": "^2.11.4"
+  },
+  "devDependencies": {
+    "mocha": "^7.0.0"
   },
   "qConfig": {
     "geometry": {

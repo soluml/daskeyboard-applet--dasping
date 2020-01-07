@@ -87,6 +87,9 @@ class DasPing extends q.DesktopApp {
     super();
 
     this.config = {
+      colorGood: "#00FF00",
+      colorBad: "#FF0000",
+      colorFail: "#FF00FF",
       ...this.config,
       midSteps: parseInt(this.config.midSteps, 10) || 3,
       pingThreshold: parseInt(this.config.pingThreshold, 10) || 300,
