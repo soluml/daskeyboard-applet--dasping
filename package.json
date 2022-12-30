@@ -33,7 +33,7 @@
     "daskeyboard-applet": "^2.11.4"
   },
   "devDependencies": {
-    "mocha": "^7.0.0"
+    "mocha": "^10.2.0"
   },
   "qConfig": {
     "geometry": {
