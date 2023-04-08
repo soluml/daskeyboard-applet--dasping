@@ -2,14 +2,14 @@ const q = require("daskeyboard-applet");
 const { execSync } = require("child_process");
 const { logger } = q;
 const pingCountArg = process.platform === "win32" ? "-n" : "-c";
-const timeRe = / time=(\d+\.?\d*)\s?ms/gi;
+const timeRe = / time(\=|\<)(\d+\.?\d*)\s?ms/gi;
 
 function buildColorSteps({
   colorGood,
   colorBad,
   midSteps,
   pingThreshold,
-  stepGap
+  stepGap,
 }) {
   const totalSteps = midSteps + 2;
   const colorGoodRGB = hexToRGB(colorGood);
@@ -70,16 +70,7 @@ function hexToRGB(color) {
 }
 
 function rgbToHex(color) {
-  return (
-    "#" +
-    color
-      .map(n =>
-        Number(n)
-          .toString(16)
-          .padStart(2, "0")
-      )
-      .join("")
-  );
+  return "#" + color.map(n => Number(n).toString(16).padStart(2, "0")).join("");
 }
 
 class DasPing extends q.DesktopApp {
@@ -94,7 +85,7 @@ class DasPing extends q.DesktopApp {
       midSteps: parseInt(this.config.midSteps, 10) || 3,
       pingThreshold: parseInt(this.config.pingThreshold, 10) || 300,
       pollingInterval: parseInt(this.config.pollingInterval, 10) || 60000,
-      stepGap: parseInt(this.config.stepGap, 10) || 100
+      stepGap: parseInt(this.config.stepGap, 10) || 100,
     };
 
     this.colorSteps = buildColorSteps(this.config);
@@ -108,7 +99,7 @@ class DasPing extends q.DesktopApp {
 
     try {
       const output = execSync(`ping ${address} ${pingCountArg} 1`).toString();
-      var [, time] = timeRe.exec(output);
+      var [, , time] = timeRe.exec(output);
 
       // Reset exec index for next call
       timeRe.lastIndex = 0;
@@ -140,7 +131,7 @@ class DasPing extends q.DesktopApp {
     return new q.Signal({
       points: [[new q.Point(color)]],
       name: "Das Ping",
-      message
+      message,
     });
   }
 }
