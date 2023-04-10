@@ -13,9 +13,9 @@ function getDefaultConfig(config) {
         pingThreshold: 300,
         pollingInterval: 60000,
         stepGap: 100,
-        ...config
-      }
-    }
+        ...config,
+      },
+    },
   };
 }
 
@@ -36,5 +36,41 @@ describe("Das Ping: #run()", () => {
 
     assert.ok(color);
     assert.notEqual(color, config.applet.defaults.colorFail);
+  });
+
+  it("successfully handles response time less than 1ms (<1ms).", async () => {
+    const config = getDefaultConfig({ address: "localhost" });
+
+    await App.processConfig(config);
+
+    const signal = await App.run();
+    const { color } = signal.points[0][0];
+
+    assert.ok(color);
+    assert.notEqual(color, config.applet.defaults.colorFail);
+  });
+
+  it("gracefully handles a failed ping due to dns resolution failure.", async () => {
+    const config = getDefaultConfig({ address: "HOPEFULLYTHISDOESNOTEXIST" });
+
+    await App.processConfig(config);
+
+    const signal = await App.run();
+    const { color } = signal.points[0][0];
+
+    assert.ok(color);
+    assert.equal(color, config.applet.defaults.colorFail);
+  });
+
+  it("gracefully handles a failed ping due to routing failure.", async () => {
+    const config = getDefaultConfig({ address: "0.0.0.0" });
+
+    await App.processConfig(config);
+
+    const signal = await App.run();
+    const { color } = signal.points[0][0];
+
+    assert.ok(color);
+    assert.equal(color, config.applet.defaults.colorFail);
   });
 });
